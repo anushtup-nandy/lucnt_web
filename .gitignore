@@ -1,0 +1,27 @@
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Netlify
+.netlify/
+
+# Env
+.env
+.env.local
+
+# Node (only if build tooling gets added later)
+node_modules/
+npm-debug.log*
+
+# Logs
+*.log

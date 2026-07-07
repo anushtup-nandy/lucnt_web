@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>lucnt — Your agents spend. The books write themselves.</title>
+<meta name="description" content="lucnt stands between an AI employee and the money it moves. Policy first. Payment second. A balanced ledger left behind.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<noscript>lucnt governs every purchase an AI agent makes: policy before payment, then balanced, taxed, reconciled books written automatically.</noscript>
+
+<nav id="nav"><div class="in">
+  <a class="brand" href="#hero"><span class="markq"></span>lucnt</a>
+  <div class="nav-actions">
+    <a class="nav-link" href="#blog">Blog</a>
+    <a class="btn-lime" href="#cta">Get access</a>
+  </div>
+</div></nav>
+
+<div id="bookLayer" aria-hidden="true"></div>
+
+<div class="spaPage active" id="page-home">
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div class="heroCopy">
+    <h1 class="rv">Your agents spend.<br>The books pile up.</h1>
+    <p class="sub rv">lucnt stands between an AI employee and the money it moves. <b>Policy first. Payment second.</b> A balanced ledger left behind.</p>
+    <form class="cap rv" data-cap name="hero-access" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="hero-access">
+      <p hidden><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+      <label class="sr-only" for="em1">Work email</label>
+      <input id="em1" name="email" type="email" required placeholder="Work email">
+      <button class="btn-lime" type="submit">Get access</button>
+    </form>
+  </div>
+</section>
+
+<!-- scroll-driven organize runway: the fallen books straighten into a shelf as this scrolls by -->
+<div id="bridge"></div>
+
+<!-- ===== PLATFORM ===== -->
+<section id="plat">
+  <div class="platIntro">
+    <span class="eyebrow rv">Platform</span>
+    <h2 class="rv">How lucnt works</h2>
+    <p class="rv">Every agent purchase moves through the same three moments &mdash; checked, matched, remembered &mdash; before it ever touches your books.</p>
+  </div>
+  <div id="platSticky">
+    <div class="platFull">
+      <div class="canvasPanel" id="canvasPanel">
+
+        <!-- SCENE 1 · GOVERN -->
+        <div class="scene s-go on" data-s="0">
+          <div class="focal" id="goCard">
+            <div class="ft"><span>Clearance &middot; overnight</span><span class="tag" id="goTag">TX-4469</span></div>
+            <div class="frow in"><span class="c">&#9673;</span><span>Coding Agent requests <b>AWS compute</b> &middot; $110</span></div>
+            <div class="frow" data-r="1"><span class="c">&#10003;</span><span><b>Budget</b> &middot; $320 available</span></div>
+            <div class="frow" data-r="2"><span class="c">&#10003;</span><span><b>Ceiling</b> &middot; $110 is under $200</span></div>
+            <div class="frow" data-r="3"><span class="c hold">&#9679;</span><span><b>Vendor</b> &middot; AWS not pre-approved</span></div>
+            <span class="focalBtn" id="goBtn">&#10003; Approve AWS for Coding</span>
+            <span class="focalStamp" id="goStamp">APPROVED &middot; TX-4469</span>
+          </div>
+        </div>
+
+        <!-- SCENE 2 · RECONCILE -->
+        <div class="scene s-rc" data-s="1">
+          <div class="focal" id="rcCard">
+            <div class="ft"><span>Reconcile &middot; INV-OA-4471</span><span class="tag" id="rcTag">1 HELD</span></div>
+            <div class="frow in"><span class="c">&#10003;</span><span><b>Invoice</b> &middot; &#8377;15,299 matched</span></div>
+            <div class="frow" data-r="1"><span class="c">&#10003;</span><span><b>Payment</b> &middot; card 0072 matched</span></div>
+            <div class="frow" data-r="2"><span class="c">&#10003;</span><span><b>Journal</b> &middot; JE-4471 balanced</span></div>
+            <div class="frow" data-r="3"><span class="c bad">&#33;</span><span><b>Duplicate</b> &middot; &#8377;15,299 seen twice</span></div>
+            <div class="frow" data-r="4"><span class="c">&#8635;</span><span><b>Refund</b> &middot; filed automatically</span></div>
+          </div>
+        </div>
+
+        <!-- SCENE 3 · REMEMBER -->
+        <div class="scene s-me" data-s="2">
+          <div class="focal" id="meCard">
+            <div class="ft"><span>Policy memory</span><span class="tag" id="meTag">UPDATED</span></div>
+            <div class="frow in"><span class="c">&#10003;</span><span>GPT&#8209;5 routes above 128K only</span></div>
+            <div class="frow" data-r="1"><span class="c">&#10003;</span><span>Canva spend always needs a receipt</span></div>
+            <div class="frow" data-r="2"><span class="c">&#10003;</span><span>Ops team flies standard tier</span></div>
+            <div class="frow" data-r="3"><span class="c hold">&#9673;</span><span>New: route summaries to <b>Claude</b> &middot; saves &#8377;18.4L/yr</span></div>
+            <span class="focalBtn" id="meBtn">Apply this policy</span>
+            <span class="focalStamp" id="meStamp">POLICY UPDATED &middot; BY MEMORY</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="platCopy">
+        <div class="tabs">
+          <span class="pill on" data-t="0">Govern</span>
+          <span class="pill" data-t="1">Reconcile</span>
+          <span class="pill" data-t="2">Remember</span>
+        </div>
+        <div class="chapters">
+          <div class="chapter on" data-c="0">
+            <h3>Approval before payment.</h3>
+            <p>The request arrives with its reason. lucnt checks budget, amount, and vendor against your policy. <b>What passes, pays. What does not, waits for you.</b></p>
+          </div>
+          <div class="chapter" data-c="1">
+            <h3>Everything finds its match.</h3>
+            <p>Invoices meet payments meet entries. Duplicates cancel themselves and file the refund. <b>The one true exception is set aside with a name on it.</b></p>
+          </div>
+          <div class="chapter" data-c="2">
+            <h3>Decisions become memory.</h3>
+            <p>Every ruling is kept. When the same question returns, lucnt already knows. <b>And it tells you when the policy itself should change.</b></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dotRail"><span class="dot on" data-d="0"></span><span class="dot" data-d="1"></span><span class="dot" data-d="2"></span></div>
+  </div>
+
+  <!-- mobile stacked chapters -->
+  <div class="m-ch"><span class="pillm">Govern</span><h3>Approval before payment.</h3><p>Budget, amount, and vendor checked against your policy before money moves. What passes, pays. What does not, waits for you.</p></div>
+  <div class="m-ch"><span class="pillm">Reconcile</span><h3>Everything finds its match.</h3><p>Invoices meet payments meet entries. Duplicates cancel themselves and file the refund.</p></div>
+  <div class="m-ch"><span class="pillm">Remember</span><h3>Decisions become memory.</h3><p>Every ruling is kept, and lucnt tells you when the policy itself should change.</p></div>
+</section>
+
+<!-- ===== WORKS WITH ===== -->
+<section id="strip">
+  <p>Writes clean entries straight into <b>Tally, QuickBooks, Xero, and NetSuite</b> &middot; and the agents you already run.</p>
+</section>
+
+<!-- ===== BOOKS ===== -->
+<section id="books">
+  <div class="head">
+    <span class="eyebrow rv">The ledger</span>
+    <h2 class="rv">A shelf your auditor can pull from.</h2>
+    <p class="lead rv">Entries write themselves as agents spend. Months close on their own and take their place. <b>Four entities, four standards, one shelf.</b></p>
+  </div>
+  <div class="ledgerStage" aria-hidden="true">
+    <div class="page" id="ledgerPage">
+      <div class="ph"><span>&#8377; INDIA &middot; JUL</span><span>IND AS</span></div>
+      <div class="je"><span><b>Dr</b> R&amp;D Software</span><span>15,299</span></div>
+      <div class="je"><span><b>Dr</b> Input IGST 18%</span><span>2,754</span></div>
+      <div class="je"><span><b>Cr</b> OpenAI payable</span><span>18,053</span></div>
+      <div class="je"><span><b>Cr</b> Output IGST RCM</span><span>2,754</span></div>
+      <div class="bal">BALANCED &#10003;</div>
+    </div>
+  </div>
+  <div class="shelf" id="shelfBooks" aria-hidden="true"></div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section id="cta">
+  <span class="eyebrow">Waitlist</span>
+  <h2>Get on the list.</h2>
+  <p class="body">lucnt is onboarding a small number of design partners running real agent spend today. Join the waitlist and we'll reach out as seats open.</p>
+
+  <form class="wait" id="waitForm" name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="waitlist">
+    <p hidden><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+    <div class="waitRow">
+      <label class="sr-only" for="wEmail">Work email</label>
+      <input id="wEmail" name="email" type="email" required placeholder="Work email">
+      <label class="sr-only" for="wRole">Your role</label>
+      <select id="wRole" name="role">
+        <option value="">I am a&hellip;</option>
+        <option>Founder</option>
+        <option>Finance / Ops</option>
+        <option>Engineer</option>
+        <option>Just curious</option>
+      </select>
+    </div>
+    <button class="btn-lime" type="submit">Join the waitlist</button>
+  </form>
+
+  <div class="waitDone" id="waitDone">
+    <span class="waitCheck">&#10003;</span>
+    <p><b>You're on the list.</b> We read every request personally and reach out as design-partner seats open.</p>
+  </div>
+</section>
+
+<footer><div class="in">
+  <div class="col">
+    <a class="brand" href="#hero"><span class="markq"></span>lucnt</a>
+    <p class="tag">The moment before the money moves.</p>
+    <p class="c">&copy; 2026 lucnt Inc.</p>
+  </div>
+  <div class="col"><span class="lbl">Platform</span><a href="#plat">How it works</a><a href="#books">The ledger</a><a href="#cta">Waitlist</a></div>
+  <div class="col"><span class="lbl">Company</span><a href="#hero">About</a><a href="#blog">Blog</a><a href="#cta">Contact</a></div>
+  <div class="col"><span class="lbl">Entities</span><a href="#books">India &middot; Ind AS</a><a href="#books">US &middot; GAAP</a><a href="#books">Singapore &middot; SFRS</a><a href="#books">Europe &middot; IFRS</a></div>
+</div></footer>
+
+</div><!-- /page-home -->
+
+<!-- ===== BLOG INDEX ===== -->
+<div class="spaPage" id="page-blog">
+  <div class="blogWrap">
+    <div class="head">
+      <span class="eyebrow">Blog</span>
+      <h1>Notes on agents that spend.</h1>
+      <p>What we're learning about AI employees, their money, and the books that have to keep up with both.</p>
+    </div>
+    <div class="blogList">
+      <a class="post" href="#post-agent-economy">
+        <span class="meta">01 &middot; The agent economy</span>
+        <h2>Your business already has a new employee with a company card.</h2>
+        <p>AI agents are booking compute, renewing subscriptions, and hiring contractors, often before anyone signs off. Here is what changes when the spender is not a person.</p>
+        <span class="read">Read the piece &rarr;</span>
+      </a>
+      <a class="post" href="#post-policy">
+        <span class="meta">02 &middot; How lucnt thinks</span>
+        <h2>Approval has to happen before the money moves, not after.</h2>
+        <p>Most finance tools are built to record what already happened. That works for humans, who ask first. Agents don't. Here is why the check has to move upstream of the payment.</p>
+        <span class="read">Read the piece &rarr;</span>
+      </a>
+      <a class="post" href="#post-books">
+        <span class="meta">03 &middot; Under the hood</span>
+        <h2>Four currencies, four standards, one shelf that closes itself.</h2>
+        <p>A single agent decision can trigger IGST in India, sales tax questions in the US, and a GST reverse charge in Singapore, all from one line of code. Here is how that becomes a balanced ledger.</p>
+        <span class="read">Read the piece &rarr;</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POST 1 ===== -->
+<div class="spaPage" id="page-post-agent-economy">
+  <article>
+    <a class="back" href="#blog">&larr; Blog</a>
+    <h1>Your business already has a new employee with a company card.</h1>
+    <p class="dek">It doesn't sleep, doesn't ask before it buys, and doesn't know what a chart of accounts is. It's already spending your money.</p>
+    <p class="byline">lucnt team &middot; agent economy</p>
+    <div class="artBody">
+      <p>Somewhere in your stack right now, an agent is deciding whether to spend money. It might be a coding assistant reaching for a bigger compute tier at 3am. It might be a research agent renewing a data subscription it started last month. It might be an ops agent booking a contractor to fix something before a human even knew it was broken.</p>
+      <p>None of these are hypothetical. They are the ordinary, unglamorous behavior of tools that were built to get a job done, and spending money is now part of getting the job done. <b>The agent isn't asking for a budget. It's just moving.</b></p>
+      <h2>The finance stack assumed a human would click "pay"</h2>
+      <p>Every tool your finance team already owns, QuickBooks, Ramp, Brex, NetSuite, was designed around a simple assumption: a person decides to spend, then the software records it. The person is the control. The software is the memory.</p>
+      <p>That assumption quietly breaks the moment the spender is a machine. An agent doesn't pause to consider whether $400 on a new API tier is a reasonable idea this month. It doesn't know your vendor is supposed to be pre-approved. It doesn't file a tax code. It just spends, because spending was the fastest way to finish the task it was given.</p>
+      <p class="pull">The control humans provided for free, judgment before the transaction, doesn't exist for agents unless someone builds it in.</p>
+      <h2>Volume changes the shape of the problem</h2>
+      <p>A single overspending employee is a conversation with their manager. A single agent making the same kind of decision, at machine speed, across every task it runs, is a pattern. Multiply that by every agent your company now runs, coding, research, ops, support, and the pattern becomes the majority of your transaction volume before anyone notices it happened.</p>
+      <p>This isn't a warning about AI running wild. Most of these decisions are fine. The problem is that "mostly fine" isn't good enough for money, and there has never been a layer built to tell the difference between the decision that's fine and the one that isn't, <b>before</b> the payment clears.</p>
+      <h2>What actually needs to change</h2>
+      <p>Not the agents. They're doing their job. What needs to change is where the check happens. Today, oversight happens after the fact, in a monthly close, in a surprised Slack message from finance, in a reconciliation that finds the anomaly three weeks too late.</p>
+      <p>The fix isn't slowing the agents down. It's moving the judgment earlier, into the half-second between the decision and the transaction, so policy gets a vote before the money moves instead of a postmortem after it's gone.</p>
+    </div>
+    <div class="cta-inline">
+      <p>That's the layer lucnt builds. One call, <b>agent.spend(vendor, amount, reason)</b>, checks policy before payment and leaves a balanced, tax-correct entry behind it.</p>
+      <a href="#cta">See how it works</a>
+    </div>
+  </article>
+</div>
+
+<!-- ===== POST 2 ===== -->
+<div class="spaPage" id="page-post-policy">
+  <article>
+    <a class="back" href="#blog">&larr; Blog</a>
+    <h1>Approval has to happen before the money moves, not after.</h1>
+    <p class="dek">A human asks permission because asking is free and being wrong is expensive. An agent has no reason to ask, unless you give it one.</p>
+    <p class="byline">lucnt team &middot; how lucnt thinks</p>
+    <div class="artBody">
+      <p>Think about how spend approval actually works for a person. Someone wants to buy a $2,000 tool. They open a request, a manager looks at it, and money moves only after a human has said yes. The check happens <b>before</b> the transaction, and it happens because asking first is simply what people do when the money isn't theirs.</p>
+      <p>Now think about how the same request looks coming from an agent. There is no pause. There is no instinct to check with someone first. The agent's job is to finish the task, and if finishing the task means buying the tool, it buys the tool. It isn't being reckless. It's doing exactly what it was told, at a speed no approval workflow built for humans was designed to catch.</p>
+      <h2>Why "record it and review it later" doesn't work here</h2>
+      <p>Most financial software, including the good, expensive kind, is built around a single pattern: transaction happens, then software records it, categorizes it, and eventually someone reviews it. That pattern works fine when a human already did the judgment part before the transaction. The software's job was only ever to remember, not to decide.</p>
+      <p>Take that same pattern and point it at agent spend, and the judgment step is simply missing. You get a perfect, well-organized record of decisions nobody checked. The books close on time. The problem is what's already inside them.</p>
+      <p class="pull">A ledger that's accurate after the fact isn't the same thing as a ledger that was ever in control.</p>
+      <h2>Moving the check upstream</h2>
+      <p>The fix is not more dashboards or faster reconciliation. It's moving the decision to the only place it can still matter: before the payment executes. Budget, vendor, and amount get checked against policy in the same half-second the agent tries to spend. If the request clears, it pays immediately, with no human in the loop for the routine case. If it doesn't, it waits, with a clear reason attached, for the person who should actually decide.</p>
+      <p>This is a small architectural difference with a large practical one. It means the agent still moves at agent speed for the 95% of decisions that are genuinely fine, and a human only sees the request that was actually worth their attention. Nobody is reviewing a spreadsheet of everything. Someone is approving the one thing that needed a person.</p>
+      <h2>What this means for a finance team</h2>
+      <p>It means the job changes from archaeology to governance. Instead of digging through a month of transactions looking for what an agent shouldn't have bought, a controller sets the policy once, budgets, vendors, ceilings, and the system enforces it at the only moment enforcement can work: before the money is gone.</p>
+    </div>
+    <div class="cta-inline">
+      <p>This is the whole idea behind <b>agent.spend(vendor, amount, reason)</b>: policy runs first, payment runs second, and the ledger is a byproduct of a decision that was already correct.</p>
+      <a href="#plat">See how the check runs</a>
+    </div>
+  </article>
+</div>
+
+<!-- ===== POST 3 ===== -->
+<div class="spaPage" id="page-post-books">
+  <article>
+    <a class="back" href="#blog">&larr; Blog</a>
+    <h1>Four currencies, four standards, one shelf that closes itself.</h1>
+    <p class="dek">An agent doesn't know it just triggered a reverse charge in three countries. It just knows the task is done.</p>
+    <p class="byline">lucnt team &middot; under the hood</p>
+    <div class="artBody">
+      <p>Picture a research agent that needs a better model for a difficult task. It's routed through your infrastructure in Singapore, billed in US dollars, used by a team that reports in India, and the invoice technically belongs to a European entity that holds the vendor contract. One decision. Four jurisdictions.</p>
+      <p>To the agent, this is a single, simple action: call the API, get the answer, move on. To your books, it's four separate obligations that all have to be correct at once.</p>
+      <div class="tablewrap">
+        <div class="trow2 head"><span>Entity</span><span>Standard</span><span>Tax treatment</span></div>
+        <div class="trow2"><span>India</span><span>Ind AS</span><span>18% IGST, reverse charge</span></div>
+        <div class="trow2"><span>United States</span><span>US GAAP</span><span>No VAT, &sect;174A R&amp;D expensing</span></div>
+        <div class="trow2"><span>Singapore</span><span>SFRS</span><span>9% GST, reverse charge</span></div>
+        <div class="trow2"><span>Ireland (EU)</span><span>IFRS</span><span>23% VAT, reverse charge</span></div>
+      </div>
+      <h2>Why this used to be a human's job</h2>
+      <p>Multi-entity accounting has always required someone who understood all four of those rows at once, and knew which one applied to which transaction. That's a real, specialized skill, and it's exactly why closing the books took days instead of minutes: a person had to look at the transaction, work out where it actually sat, and write the correct entry by hand.</p>
+      <p>Agents don't change what's required. They change how often it's required. A finance team that used to see a handful of cross-border transactions a week now sees them constantly, because an agent doesn't take weekends and doesn't wait for a convenient batch of similar purchases to review together.</p>
+      <p class="pull">The rules didn't get simpler. The frequency just stopped being something a person could keep up with.</p>
+      <h2>What "the books write themselves" actually means</h2>
+      <p>It doesn't mean skipping the accounting. It means the same judgment a skilled controller would apply, which entity, which standard, which tax treatment, runs automatically the moment the agent's request clears policy. The debit and credit lines, the correct IGST or VAT treatment, the currency conversion, all of it gets written in the same motion as the approval, not reconstructed later from a pile of receipts.</p>
+      <p>Each entity keeps its own shelf: India under Ind AS, the US under GAAP, Singapore under SFRS, Ireland under IFRS. When a month closes, it closes because every entry in it was already correct, not because someone spent three days making it correct after the fact.</p>
+      <h2>The part that actually matters to an auditor</h2>
+      <p>A balanced ledger is table stakes. What an auditor actually wants is a reason attached to every line: why this vendor was approved, why this entity absorbed the cost, why this tax treatment applied. That reasoning is what usually gets lost when books are reconstructed after the spend. It's the one thing that has to survive if the books are going to be trusted, not just balanced.</p>
+    </div>
+    <div class="cta-inline">
+      <p>Every entry lucnt writes carries the reasoning that produced it, so the shelf your auditor pulls from is never just numbers.</p>
+      <a href="#books">See the ledger</a>
+    </div>
+  </article>
+</div>
+</body>
+</html>
