@@ -31,11 +31,9 @@
   <div class="heroCopy">
     <h1 class="rv">Your agents spend.<br>The books pile up.</h1>
     <p class="sub rv">lucnt stands between an AI employee and the money it moves. <b>Policy first. Payment second.</b> A balanced ledger left behind.</p>
-    <form class="cap rv" data-cap name="hero-access" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-      <input type="hidden" name="form-name" value="hero-access">
-      <p hidden><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+    <form class="cap rv" data-cap>
       <label class="sr-only" for="em1">Work email</label>
-      <input id="em1" name="email" type="email" required placeholder="Work email">
+      <input id="em1" type="email" required placeholder="Work email">
       <button class="btn-lime" type="submit">Get access</button>
     </form>
   </div>
@@ -156,14 +154,12 @@
   <h2>Get on the list.</h2>
   <p class="body">lucnt is onboarding a small number of design partners running real agent spend today. Join the waitlist and we'll reach out as seats open.</p>
 
-  <form class="wait" id="waitForm" name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-    <input type="hidden" name="form-name" value="waitlist">
-    <p hidden><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+  <form class="wait" id="waitForm">
     <div class="waitRow">
       <label class="sr-only" for="wEmail">Work email</label>
-      <input id="wEmail" name="email" type="email" required placeholder="Work email">
+      <input id="wEmail" type="email" required placeholder="Work email">
       <label class="sr-only" for="wRole">Your role</label>
-      <select id="wRole" name="role">
+      <select id="wRole">
         <option value="">I am a&hellip;</option>
         <option>Founder</option>
         <option>Finance / Ops</option>

@@ -16,29 +16,16 @@
   const rvIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rvIO.unobserve(e.target);}}),{threshold:.2});
   $$('.rv').forEach(el=>rvIO.observe(el));
 
-  /* netlify forms: AJAX submit (static HTML already carries data-netlify + form-name for build-time detection) */
-  const encodeForm=data=>Object.keys(data).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(data[k])).join('&');
-  const submitToNetlify=form=>fetch('/',{
-    method:'POST',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body:encodeForm(Object.fromEntries(new FormData(form)))
-  });
-
   /* capture */
-  $$('[data-cap]').forEach(f=>f.addEventListener('submit',e=>{
-    e.preventDefault();
-    submitToNetlify(f)
-      .then(()=>{f.innerHTML='<span class="cap-done">&#10003;&nbsp; You are on the list. We will write soon.</span>';})
-      .catch(()=>{f.innerHTML='<span class="cap-done">Something went wrong &mdash; email us instead.</span>';});
-  }));
+  $$('[data-cap]').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();
+    f.innerHTML='<span class="cap-done">&#10003;&nbsp; You are on the list. We will write soon.</span>';}));
 
   /* waitlist section */
   const waitForm=$('#waitForm'),waitDone=$('#waitDone');
   if(waitForm){waitForm.addEventListener('submit',e=>{
     e.preventDefault();
-    submitToNetlify(waitForm)
-      .then(()=>{waitForm.classList.add('hide');waitDone.classList.add('show');})
-      .catch(()=>{waitForm.querySelector('button').textContent='Something went wrong — try again';});
+    waitForm.classList.add('hide');
+    waitDone.classList.add('show');
   });}
 
   /* ================= SPA PAGE ROUTER ================= */
