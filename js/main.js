@@ -64,7 +64,8 @@
     const COUNT=Math.max(7,Math.min(14,Math.round(window.innerWidth/74)));
     const GAP=10;
     const shelfEl=document.createElement('div');shelfEl.className='fshelf';layer.appendChild(shelfEl);
-    let books=[],sorted=false,sorting=false,organizeScheduled=false,fallRaf=null,sortRaf=null,sortStart=0,t0=0,last=0;
+    let books=[],sorted=false,sorting=false,organizeScheduled=false,fallRaf=null,sortRaf=null,last=0;
+    let simT=0,boost=1,boostTarget=1,restAccum=0,prevY=(window.pageYOffset||0); // scroll-driven time-scale: scrolling hurries the fall + bind along
 
     function mkEl(variant){
       const d=document.createElement('div');       // transform container; bkIn keyframe fades it in
@@ -108,9 +109,15 @@
     }
     /* falling-leaf flutter: slow floaty descent that PULSES, a WIDE side-to-side glide, constant rocking,
        and a 3D flex of the sheet — then a cushioned landing into a pile on the floor */
+    function tick(real){                     // ease the scroll boost, then return the boosted time step
+      boost+=(boostTarget-boost)*0.12;
+      boostTarget+=(1-boostTarget)*0.05;     // boost relaxes back to 1x once the user stops scrolling
+      return real*boost;
+    }
     function fallLoop(now){
-      const dt=Math.min(0.033,(now-last)/1000);last=now;
-      const te=(now-t0)/1000;
+      const real=Math.min(0.033,(now-last)/1000);last=now;
+      const bdt=tick(real);simT+=bdt;        // boosted sim clock: scroll pushes it forward faster than wall time
+      const te=simT;
       let landed=0;
       for(const b of books){
         const f=b.fl,age=te-f.born;
@@ -121,8 +128,8 @@
         let vy=f.vyMean*(0.55+0.45*Math.abs(Math.cos(gp)))*Math.min(1,age/0.5);
         const dRest=f.restY-f.y;
         if(dRest<120)vy*=Math.max(0.06,dRest/120);
-        f.y+=vy*dt;
-        if(f.y>=f.restY-1){f.y=f.restY;f.settle=Math.min(1,f.settle+dt*2.4);}
+        f.y+=vy*bdt;
+        if(f.y>=f.restY-1){f.y=f.restY;f.settle=Math.min(1,f.settle+bdt*2.4);}
         if(f.settle>=1)landed++;
         const calm=1-f.settle;
         // WIDE lateral glide (+ a faster small edge-flutter) — the horizontal travel is what reads as paper
@@ -137,8 +144,8 @@
       }
       render(0);
       if(!organizeScheduled&&books.length===COUNT&&landed===COUNT){
-        organizeScheduled=true;
-        setTimeout(beginSort,650);   // let the paper pile rest, THEN bind into books
+        restAccum+=bdt;                       // brief rest before binding; scrolling shrinks it to near-zero
+        if(restAccum>=0.5){organizeScheduled=true;beginSort();}
       }
       if(!sorted&&!sorting)fallRaf=requestAnimationFrame(fallLoop);
     }
@@ -149,9 +156,11 @@
       if(fallRaf)cancelAnimationFrame(fallRaf);
       books.forEach(b=>{b.paperEl.style.transform='';}); // sheet lies flat as it binds into a book
       layoutTidy();
-      sortStart=performance.now();
+      let sp=0,lastS=performance.now();
       (function step(now){
-        const t=Math.min(1,(now-sortStart)/1500);
+        const real=Math.min(0.033,(now-lastS)/1000);lastS=now;
+        sp+=tick(real)/1.1;                  // ~1.1s bind at rest; the same scroll boost hurries it into view
+        const t=Math.min(1,sp);
         render(t);
         if(t<1)sortRaf=requestAnimationFrame(step);
         else{sorted=true;sorting=false;render(1);}
@@ -161,7 +170,7 @@
     function updateFade(){
       if(!plat){layer.style.opacity='1';return;}
       const top=plat.getBoundingClientRect().top;
-      const start=window.innerHeight*1.3,end=window.innerHeight*0.4; // fade out as "How lucnt works" nears
+      const start=window.innerHeight*0.95,end=window.innerHeight*0.28; // hold the shelf through the hero, fade as "How lucnt works" nears
       let o=(top-end)/(start-end);
       layer.style.opacity=o<0?0:o>1?1:o;
     }
@@ -184,13 +193,13 @@
         flapAX:22+Math.random()*20, flapAY:12+Math.random()*13, skewA:4+Math.random()*5,   // 3D flex of the sheet
         flapW:3+Math.random()*2.4, flapPh:Math.random()*6.283,
         restY:IH*0.90 - h/2 - Math.random()*26,   // land in a loose pile on the floor
-        settle:0, born:(performance.now()-t0)/1000
+        settle:0, born:simT                        // stamped on the boosted sim clock so scroll speeds every sheet alike
       };
       books.push({el,paperEl,bookEl,variant,w,h,tidyW,tidyH,fl,
         chaos:{x:fl.x0,y:fl.y,a:fl.rotBase,w,h},tidy:{x:0,y:0,a:0,w:tidyW,h:tidyH}});
     }
     function startFall(){
-      t0=performance.now();last=t0;
+      last=performance.now();simT=0;prevY=window.pageYOffset||0;
       requestAnimationFrame(fallLoop);
       let spawned=0;
       (function spawnLoop(){
@@ -215,6 +224,8 @@
     updateFade();
     let bsRaf=false;
     addEventListener('scroll',()=>{
+      const y=window.pageYOffset||0,dy=y-prevY;prevY=y;
+      if(!sorted&&dy>0)boostTarget=Math.min(15,boostTarget+dy*0.05); // scrolling down hurries the fall + bind
       if(bsRaf)return;bsRaf=true;
       requestAnimationFrame(()=>{bsRaf=false;updateFade();});
     },{passive:true});

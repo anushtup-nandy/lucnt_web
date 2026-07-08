@@ -44,7 +44,7 @@ nav .in{max-width:1240px;margin:0 auto;padding:0 32px;height:64px;display:flex;a
 .cap input::placeholder{color:var(--gray)}
 .cap input:focus{border-color:var(--gray)}
 .cap-done{display:inline-flex;align-items:center;font:400 14px Inter;color:var(--lime-ink);background:var(--limewash);padding:12px 18px;border-radius:9px}
-#bridge{height:60vh}
+#bridge{height:10vh}  /* short runway: shelf binds during the hero, then the platform follows close behind */
 
 /* ===== SHELF ENGINE ===== */
 .shelf{position:relative;width:100%}
