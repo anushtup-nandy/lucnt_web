@@ -194,6 +194,7 @@ footer .c{font:400 12px Inter;color:var(--gray);margin-top:10px}
 .m-ch{display:none}
 @media(max-width:820px){
   #hero{padding-top:80px}
+  .heroCopy{z-index:10}  /* mobile: text wraps taller into the book zone — keep copy + email form above the falling books (#bookLayer z6) */
   .platIntro{padding-top:70px}
   #plat{height:auto}
   #platSticky{position:static;height:auto;display:block;overflow:visible}
