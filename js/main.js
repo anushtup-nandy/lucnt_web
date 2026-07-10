@@ -1,4 +1,4 @@
-/* lucnt — behavior: SPA hash router, hero paper-flutter → book-shelf animation, platform scenes, ledger loop. */
+/* lucnt — behavior: SPA hash router, hero line-untangle into ledger rules, platform scenes, ledger loop. */
 (function () {
   'use strict';
 
@@ -39,8 +39,6 @@
     $$('.spaPage').forEach(p=>p.classList.remove('active'));
     const target=document.getElementById(id);
     if(target)target.classList.add('active');
-    const bl=$('#bookLayer');
-    if(bl)bl.classList.toggle('hide',id!=='page-home');
   }
   function route(){
     const h=location.hash.replace('#','');
@@ -56,179 +54,174 @@
   addEventListener('hashchange',route);
   route();
 
-  /* ================= BOOK STORY: hero chaos -> scroll-organized shelf -> platform ================= */
+  /* ============ HERO: a dense skein of agent spend combs itself out, thread by thread, into a balanced ledger ============ */
   (function(){
-    const layer=$('#bookLayer');
-    if(!layer)return;
-    const plat=document.getElementById('plat');
-    const COUNT=Math.max(7,Math.min(14,Math.round(window.innerWidth/74)));
-    const GAP=10;
-    const shelfEl=document.createElement('div');shelfEl.className='fshelf';layer.appendChild(shelfEl);
-    let books=[],sorted=false,sorting=false,organizeScheduled=false,fallRaf=null,sortRaf=null,last=0;
-    let simT=0,boost=1,boostTarget=1,restAccum=0,prevY=(window.pageYOffset||0); // scroll-driven time-scale: scrolling hurries the fall + bind along
+    const svg=$('#weave');if(!svg)return;
+    const NS='http://www.w3.org/2000/svg';
+    const mk=(tag,a,txt)=>{const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;};
+    const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+    const lerp=(a,b,t)=>a+(b-a)*t;
+    const gLines=$('#wLines',svg),gChaos=$('#wChaos',svg),gOrder=$('#wOrder',svg),bal=$('#wBal',svg);
 
-    function mkEl(variant){
-      const d=document.createElement('div');       // transform container; bkIn keyframe fades it in
-      d.className='fbook';
-      const paper=document.createElement('div');paper.className='skin paper';
-      const book=document.createElement('div');book.className='skin book '+variant;
-      d.appendChild(paper);d.appendChild(book);
-      layer.appendChild(d);
-      return {el:d,paperEl:paper,bookEl:book};
-    }
-    function layoutTidy(){
-      const totalW=books.reduce((s,b)=>s+b.tidyW,0)+GAP*Math.max(0,books.length-1);
-      const x0=Math.max(20,(window.innerWidth-totalW)/2);
-      const baseY=window.innerHeight*0.90;        // shelf line near the base of the hero; book bottoms sit here
-      let x=x0;
-      books.forEach(b=>{
-        b.tidy={x:x+b.tidyW/2,y:baseY-b.tidyH/2,a:0,w:b.tidyW,h:b.tidyH};
-        x+=b.tidyW+GAP;
-      });
-      shelfEl.style.left=(x0-12)+'px';
-      shelfEl.style.width=(totalW+24)+'px';
-      shelfEl.style.top=baseY+'px';
-    }
-    function render(p){
-      const n=books.length,spread=n>1?0.4:0;
-      books.forEach((b,i)=>{
-        // staggered sort wave: each book straightens a beat after the one before it
-        let bp=n>1?(p-(i/(n-1))*spread)/(1-spread):p;
-        bp=bp<0?0:bp>1?1:bp;
-        bp=bp<.5?2*bp*bp:1-Math.pow(-2*bp+2,2)/2; // easeInOutQuad
-        const c=b.chaos,t=b.tidy;
-        const x=c.x+(t.x-c.x)*bp,y=c.y+(t.y-c.y)*bp,a=c.a+(t.a-c.a)*bp;
-        const w=c.w+(t.w-c.w)*bp,h=c.h+(t.h-c.h)*bp;
-        b.el.style.width=w+'px';
-        b.el.style.height=h+'px';
-        b.el.style.transform='translate('+(x-w/2)+'px,'+(y-h/2)+'px) rotate('+a+'deg)';
-        b.bookEl.style.opacity=bp;           // page (bp=0) binds into a book spine (bp=1)
-        b.paperEl.style.opacity=1-bp;
-      });
-      shelfEl.style.opacity=p<=0?0:Math.min(1,p*1.4); // ledge draws in as books settle onto it
-    }
-    /* falling-leaf flutter: slow floaty descent that PULSES, a WIDE side-to-side glide, constant rocking,
-       and a 3D flex of the sheet — then a cushioned landing into a pile on the floor */
-    function tick(real){                     // ease the scroll boost, then return the boosted time step
-      boost+=(boostTarget-boost)*0.12;
-      boostTarget+=(1-boostTarget)*0.05;     // boost relaxes back to 1x once the user stops scrolling
-      return real*boost;
-    }
-    function fallLoop(now){
-      const real=Math.min(0.033,(now-last)/1000);last=now;
-      const bdt=tick(real);simT+=bdt;        // boosted sim clock: scroll pushes it forward faster than wall time
-      const te=simT;
-      let landed=0;
-      for(const b of books){
-        const f=b.fl,age=te-f.born;
-        if(age<=0)continue;
-        const gp=f.glideW*age+f.glidePh;
-        // vertical: floaty; descends fastest mid-glide and stalls at each turn (the flutter cadence),
-        // eased in from rest, then cushioned into the floor so it doesn't slam like a brick
-        let vy=f.vyMean*(0.55+0.45*Math.abs(Math.cos(gp)))*Math.min(1,age/0.5);
-        const dRest=f.restY-f.y;
-        if(dRest<120)vy*=Math.max(0.06,dRest/120);
-        f.y+=vy*bdt;
-        if(f.y>=f.restY-1){f.y=f.restY;f.settle=Math.min(1,f.settle+bdt*2.4);}
-        if(f.settle>=1)landed++;
-        const calm=1-f.settle;
-        // WIDE lateral glide (+ a faster small edge-flutter) — the horizontal travel is what reads as paper
-        const x=f.x0+(f.glideA*Math.sin(gp)+f.wobA*Math.sin(f.wobW*age+f.glidePh))*calm;
-        const a=(f.rotBase+f.rockA*Math.sin(gp+1.35)+f.tumble*age)*calm+f.restRot*f.settle; // constant rock / lazy tumble
-        b.chaos={x,y:f.y,a,w:b.w,h:b.h};
-        // the sheet itself flexes in 3D (plane tilt + shear), flattening as it settles
-        const fp=f.flapW*age+f.flapPh;
-        b.paperEl.style.transform='perspective(240px) rotateX('+(f.flapAX*calm*Math.sin(fp)).toFixed(2)
-          +'deg) rotateY('+(f.flapAY*calm*Math.sin(fp*0.8+1.1)).toFixed(2)
-          +'deg) skewX('+(f.skewA*calm*Math.sin(fp*1.3+0.5)).toFixed(2)+'deg)';
+    /* canvas + ledger geometry (viewBox 0 0 1280 470) */
+    const W=1280,H=470,mX=96,runW=W-mX*2,cy=H/2;
+    const STR=13,topY=42,botY=418,rGap=(botY-topY)/(STR-1),M=56; // 13 ruled lines, 56 samples per thread
+    const rowY=s=>topY+rGap*s;
+    const memoX=mX+380;
+    const ENTRY_RULES=[0,2,4,6,8,10,12];               // header + 6 entries on alternating rules; the rest stay blank
+
+    /* deterministic PRNG — the knot is byte-identical on every replay */
+    const prng=seed=>{let a=seed>>>0;return()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};};
+    const rnd=(r,lo,hi)=>lo+(hi-lo)*r();
+
+    /* ordered target: every thread is one dead-straight ruled line */
+    const ordPts=[];
+    for(let s=0;s<STR;s++){const y=rowY(s),row=[];for(let i=0;i<M;i++){row.push({x:mX+(i/(M-1))*runW,y});}ordPts.push(row);}
+
+    /* chaos target: each thread wanders the whole field on three harmonics, looping and crossing the others */
+    const chaPts=[];
+    for(let s=0;s<STR;s++){
+      const r=prng(0x9E37+s*0x61C8);
+      const HX=[{f:2+((r()*4)|0),a:rnd(r,150,235),p:r()*6.283},{f:3+((r()*4)|0),a:rnd(r,80,145),p:r()*6.283},{f:5+((r()*3)|0),a:rnd(r,34,74),p:r()*6.283}];
+      const HY=[{f:2+((r()*3)|0),a:rnd(r,100,160),p:r()*6.283},{f:3+((r()*4)|0),a:rnd(r,50,92),p:r()*6.283},{f:6+((r()*3)|0),a:rnd(r,22,48),p:r()*6.283}];
+      const yc=cy+(rowY(s)-cy)*0.45;                    // spread across the sheet, pulled toward centre so lanes overlap
+      const row=[];
+      for(let i=0;i<M;i++){
+        const t=i/(M-1),th=t*6.283;
+        const envX=Math.pow(Math.sin(Math.PI*t),0.6);   // threads gather at the ledger margins, bulge in the belly
+        const envY=0.45+0.55*Math.sin(Math.PI*t);       // roams top-to-bottom, even near the ends
+        let x=mX+t*runW,y=yc;
+        for(const h of HX)x+=h.a*Math.sin(h.f*th+h.p)*envX;
+        for(const h of HY)y+=h.a*Math.sin(h.f*th+h.p)*envY;
+        row.push({x:clamp(x,6,W-6),y:clamp(y,10,H-10)});
       }
-      render(0);
-      if(!organizeScheduled&&books.length===COUNT&&landed===COUNT){
-        restAccum+=bdt;                       // brief rest before binding; scrolling shrinks it to near-zero
-        if(restAccum>=0.5){organizeScheduled=true;beginSort();}
+      chaPts.push(row);
+    }
+
+    /* per-thread stroke: entry rules a touch stronger, blank rules faint; varied while tangled for depth */
+    const style=[];
+    for(let s=0;s<STR;s++){
+      const r=prng(0x1F3+s*0x9E39);
+      const entry=ENTRY_RULES.indexOf(s)>=0;
+      style.push({chaosOp:rnd(r,0.5,0.9),restOp:entry?0.6:0.3,w:entry?1.5:1.2});
+    }
+
+    /* the strand paths */
+    const paths=[];
+    for(let s=0;s<STR;s++){const p=mk('path',{class:'wline','stroke-width':style[s].w});gLines.appendChild(p);paths.push(p);}
+
+    /* the disorganized reality — receipts, invoices and slips scattered across the whole field */
+    const PAPERS=[
+      {v:'OpenAI',s:'GPT-5 · 2.1M tok',a:'$18,053'},
+      {v:'AWS',s:'compute · us-east',a:'$110'},
+      {v:'Figma',s:'4 seats · monthly',a:'$180'},
+      {v:'Datadog',s:'logs · ingest',a:'$342'},
+      {v:'Canva',s:'auto-renewed',a:'$119',f:'OFF-POLICY'},
+      {v:'Slack',s:'30 seats',a:'$240'},
+      {v:'Notion',s:'+12 seats',a:'$96'},
+      {v:'Vercel',s:'usage · overage',a:'$61'},
+      {v:'Contractor',s:'invoice · net-30',a:'$1,200',f:'NO PO'},
+      {v:'GitHub',s:'Copilot · biz',a:'$228'},
+      {v:'Stripe',s:'processing fee',a:'$47'},
+      {v:'Zoom',s:'Pro · annual',a:'$150',f:'DUPLICATE'},
+      {v:'Anthropic',s:'Claude · API',a:'₹15,299'}
+    ];
+    /* a receipt outline: clean top and sides, torn/perforated bottom edge */
+    function receiptPath(w,h){
+      const hw=w/2,hh=h/2,teeth=Math.max(5,Math.round(w/18)),tw=w/teeth;
+      let d='M'+(-hw)+' '+(-hh)+' L'+hw+' '+(-hh)+' L'+hw+' '+(hh-3);
+      for(let i=0;i<teeth;i++){d+=' L'+(hw-(i+0.5)*tw).toFixed(1)+' '+hh+' L'+(hw-(i+1)*tw).toFixed(1)+' '+(hh-3);}
+      return d+' Z';
+    }
+    const COLX=[190,410,635,860,1080],ROWY=[112,238,362];
+    const rcpts=[];
+    PAPERS.forEach((d,i)=>{
+      const r=prng(0x51ED+i*0x2E31);
+      const w=118+Math.round(rnd(r,0,54)),h=60+Math.round(rnd(r,0,28)),hw=w/2,hh=h/2,padX=-hw+12;
+      const g=mk('g',{class:'rcpt'});
+      g.appendChild(mk('path',{class:'rc-paper',d:receiptPath(w,h)}));
+      g.appendChild(mk('text',{x:padX,y:-hh+19,class:'rc-vendor'},d.v));
+      if(d.s&&!d.f)g.appendChild(mk('text',{x:padX,y:-hh+33,class:'rc-sub'},d.s)); // flag takes the sub-line's place
+      g.appendChild(mk('rect',{x:padX,y:-hh+41,width:(w*0.5).toFixed(0),height:2,class:'rc-line'}));
+      g.appendChild(mk('rect',{x:padX,y:-hh+49,width:(w*0.34).toFixed(0),height:2,class:'rc-line'}));
+      g.appendChild(mk('text',{x:hw-12,y:hh-13,class:'rc-amt','text-anchor':'end'},d.a));
+      if(d.f){const fx=hw-14,fy=-hh+17;g.appendChild(mk('text',{x:fx,y:fy,class:'rc-flag','text-anchor':'end',transform:'rotate(-9 '+fx+' '+fy+')'},d.f));}
+      gChaos.appendChild(g);
+      const cx=clamp(COLX[i%5]+rnd(r,-46,46),128,W-128),cy=clamp(ROWY[(i/5|0)%3]+rnd(r,-42,42),74,H-74);
+      rcpts.push({g,cx,cy,rot:rnd(r,-16,16),rule:i});    // one paper per rule — each files itself onto its line
+    });
+
+    /* the ledger it becomes — three columns on the ruled lines, debits equal credits */
+    gOrder.appendChild(mk('text',{x:mX+6,y:rowY(0)-8,class:'wo whead','data-rule':0},'LEDGER · JUL'));
+    gOrder.appendChild(mk('text',{x:memoX,y:rowY(0)-8,class:'wo whead memo','data-rule':0},'MEMO'));
+    gOrder.appendChild(mk('text',{x:mX+runW-6,y:rowY(0)-8,class:'wo whead','data-rule':0,'text-anchor':'end'},'IND AS · ₹'));
+    const ENTRIES=[
+      ['Dr','R&D Software','OpenAI · GPT-5','15,299'],
+      ['Dr','Input IGST 18%','reverse charge','2,754'],
+      ['Dr','Cloud Infrastructure','AWS · compute','8,900'],
+      ['Cr','OpenAI payable','INV-OA-4471','15,299'],
+      ['Cr','AWS payable','INV-AWS-3392','8,900'],
+      ['Cr','IGST payable · RCM','filed automatically','2,754']
+    ];
+    ENTRIES.forEach((en,i)=>{
+      const rule=ENTRY_RULES[i+1],y=rowY(rule)-8;
+      const left=mk('text',{x:mX+6,y,class:'wo','data-rule':rule});
+      left.appendChild(mk('tspan',{class:'tag'},en[0]+'  '));
+      left.appendChild(mk('tspan',null,en[1]));
+      gOrder.appendChild(left);
+      gOrder.appendChild(mk('text',{x:memoX,y,class:'wmemo','data-rule':rule},en[2]));
+      gOrder.appendChild(mk('text',{x:mX+runW-6,y,class:'wo','data-rule':rule,'text-anchor':'end'},en[3]));
+    });
+    const orderEls=[...gOrder.querySelectorAll('text')].map(el=>({el,rule:+el.getAttribute('data-rule')}));
+
+    const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    /* Catmull-Rom -> cubic bezier: collinear points stay straight, only the turns curve */
+    function crPath(p){
+      let d='M'+p[0].x.toFixed(1)+' '+p[0].y.toFixed(1);
+      for(let i=0;i<p.length-1;i++){
+        const p0=p[i-1]||p[i],p1=p[i],p2=p[i+1],p3=p[i+2]||p[i+1];
+        const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6,c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;
+        d+='C'+c1x.toFixed(1)+' '+c1y.toFixed(1)+' '+c2x.toFixed(1)+' '+c2y.toFixed(1)+' '+p2.x.toFixed(1)+' '+p2.y.toFixed(1);
       }
-      if(!sorted&&!sorting)fallRaf=requestAnimationFrame(fallLoop);
+      return d;
     }
-    /* once every sheet has landed: each page stands up, binds into a book spine, and files onto the shelf */
-    function beginSort(){
-      if(sorted||sorting)return;
-      sorting=true;
-      if(fallRaf)cancelAnimationFrame(fallRaf);
-      books.forEach(b=>{b.paperEl.style.transform='';}); // sheet lies flat as it binds into a book
-      layoutTidy();
-      let sp=0,lastS=performance.now();
-      (function step(now){
-        const real=Math.min(0.033,(now-lastS)/1000);lastS=now;
-        sp+=tick(real)/1.1;                  // ~1.1s bind at rest; the same scroll boost hurries it into view
-        const t=Math.min(1,sp);
-        render(t);
-        if(t<1)sortRaf=requestAnimationFrame(step);
-        else{sorted=true;sorting=false;render(1);}
-      })(performance.now());
-    }
-    /* fade the whole shelf out as the platform ("How lucnt works") rises into view */
-    function updateFade(){
-      if(!plat){layer.style.opacity='1';return;}
-      const top=plat.getBoundingClientRect().top;
-      const start=window.innerHeight*0.95,end=window.innerHeight*0.28; // hold the shelf through the hero, fade as "How lucnt works" nears
-      let o=(top-end)/(start-end);
-      layer.style.opacity=o<0?0:o>1?1:o;
-    }
-    function spawnPaper(){
-      const variant=pickBk();
-      const {el,paperEl,bookEl}=mkEl(variant);
-      const IH=window.innerHeight,cx=window.innerWidth/2;
-      const stageW=Math.min(720,window.innerWidth*0.94);
-      const w=52+Math.random()*46,h=36+Math.random()*22;      // page-shaped sheet while falling
-      const tidyW=30+Math.random()*20,tidyH=92+Math.random()*40;
-      const fl={
-        x0:cx+(Math.random()-0.5)*stageW*0.38,
-        y:-40-Math.random()*90,
-        vyMean:IH*(0.32+Math.random()*0.12),           // slow float; scales with viewport so timing is steady
-        glideA:100+Math.random()*88, glideW:2.1+Math.random()*1.7, glidePh:Math.random()*6.283, // WIDE, quick glide
-        wobA:12+Math.random()*14, wobW:5.5+Math.random()*3,        // small fast edge-flutter on top
-        rockA:30+Math.random()*26,                                 // strong continuous rocking
-        tumble:(Math.random()<0.15?(Math.random()-0.5)*70:0),      // a couple of sheets lazily tumble over
-        rotBase:(Math.random()-0.5)*24, restRot:(Math.random()-0.5)*20,
-        flapAX:22+Math.random()*20, flapAY:12+Math.random()*13, skewA:4+Math.random()*5,   // 3D flex of the sheet
-        flapW:3+Math.random()*2.4, flapPh:Math.random()*6.283,
-        restY:IH*0.90 - h/2 - Math.random()*26,   // land in a loose pile on the floor
-        settle:0, born:simT                        // stamped on the boosted sim clock so scroll speeds every sheet alike
-      };
-      books.push({el,paperEl,bookEl,variant,w,h,tidyW,tidyH,fl,
-        chaos:{x:fl.x0,y:fl.y,a:fl.rotBase,w,h},tidy:{x:0,y:0,a:0,w:tidyW,h:tidyH}});
-    }
-    function startFall(){
-      last=performance.now();simT=0;prevY=window.pageYOffset||0;
-      requestAnimationFrame(fallLoop);
-      let spawned=0;
-      (function spawnLoop(){
-        spawnPaper();spawned++;
-        if(spawned<COUNT)setTimeout(spawnLoop,40+Math.random()*55);
-      })();   // organize is triggered from fallLoop once every sheet has landed
-    }
-    function staticFallback(){
-      for(let i=0;i<COUNT;i++){
-        const variant=pickBk();
-        const {el,paperEl,bookEl}=mkEl(variant);
-        const tidyW=30+Math.random()*20,tidyH=92+Math.random()*40;
-        books.push({el,paperEl,bookEl,body:null,w:tidyW,h:tidyH,variant,tidyW,tidyH,chaos:{x:0,y:0,a:0,w:tidyW,h:tidyH},tidy:{x:0,y:0,a:0,w:tidyW,h:tidyH}});
+    /* comb cascade: top thread settles first (SSTAG), left-to-right along each thread (PSTAG) */
+    const SSTAG=0.30,PSTAG=0.16,SPAN=1-SSTAG-PSTAG,RFLY=0.42,homeX=mX+90;
+    const cur=new Array(M);
+    function frame(gt){
+      for(let s=0;s<STR;s++){
+        const sd=(s/(STR-1))*SSTAG,a=chaPts[s],b=ordPts[s];
+        for(let i=0;i<M;i++){
+          const e=ease(clamp((gt-sd-(i/(M-1))*PSTAG)/SPAN,0,1));
+          cur[i]={x:lerp(a[i].x,b[i].x,e),y:lerp(a[i].y,b[i].y,e)};
+        }
+        paths[s].setAttribute('d',crPath(cur));
+        const so=ease(clamp((gt-sd-PSTAG)/SPAN,0,1));  // thread settles -> stroke calms to a ledger rule
+        paths[s].style.opacity=lerp(style[s].chaosOp,style[s].restOp,so);
       }
-      layoutTidy();
-      books.forEach(b=>{b.chaos=Object.assign({},b.tidy);});
-      sorted=true;
-      render(1);
+      for(const rc of rcpts){                           // each paper flies to its rule, rotates flat, files itself into the line
+        const sd=(rc.rule/(STR-1))*SSTAG;
+        const e=ease(clamp((gt-(sd+SPAN-RFLY))/RFLY,0,1));
+        const x=lerp(rc.cx,homeX,e),y=lerp(rc.cy,rowY(rc.rule),e),rot=lerp(rc.rot,0,e),sx=lerp(1,.55,e),sy=lerp(1,.06,e);
+        rc.g.setAttribute('transform','translate('+x.toFixed(1)+' '+y.toFixed(1)+') rotate('+rot.toFixed(1)+') scale('+sx.toFixed(3)+' '+sy.toFixed(3)+')');
+        rc.g.style.opacity=(1-clamp((e-.55)/.45,0,1)).toFixed(3);
+      }
+      for(const o of orderEls){                         // each entry writes itself just after its paper is filed
+        const sd=(o.rule/(STR-1))*SSTAG;
+        const e=ease(clamp((gt-(sd+SPAN+0.04))/0.16,0,1));
+        o.el.style.opacity=e;o.el.style.transform='translateY('+((1-e)*7).toFixed(1)+'px)';
+      }
+      bal.classList.toggle('on',gt>0.95);
     }
-    addEventListener('resize',()=>{if(sorted){layoutTidy();render(1);}});
-    if(reduced)staticFallback();else startFall();
-    updateFade();
-    let bsRaf=false;
-    addEventListener('scroll',()=>{
-      const y=window.pageYOffset||0,dy=y-prevY;prevY=y;
-      if(!sorted&&dy>0)boostTarget=Math.min(15,boostTarget+dy*0.05); // scrolling down hurries the fall + bind
-      if(bsRaf)return;bsRaf=true;
-      requestAnimationFrame(()=>{bsRaf=false;updateFade();});
-    },{passive:true});
+    const DUR=2700;let raf=null,startT=0,running=false,enterT=null;
+    function play(now){if(!startT)startT=now;const gt=Math.min(1,(now-startT)/DUR);frame(gt);if(gt<1)raf=requestAnimationFrame(play);else running=false;}
+    function start(){if(running)return;running=true;startT=0;if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(play);}
+    function reset(){clearTimeout(enterT);if(raf)cancelAnimationFrame(raf);running=false;frame(0);}
+    if(reduced){frame(1);return;}
+    frame(0);                                           // begin as a dense knot, labelled with the raw spend
+    new IntersectionObserver(es=>es.forEach(e=>{
+      if(e.isIntersecting)enterT=setTimeout(start,350);else reset(); // replays each time the hero returns
+    }),{threshold:.35}).observe(svg);
   })();
 
   /* ================= SHELF ENGINE — spring physics, pure objects ================= */
