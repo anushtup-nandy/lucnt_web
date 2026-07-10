@@ -16,18 +16,6 @@
   const rvIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rvIO.unobserve(e.target);}}),{threshold:.2});
   $$('.rv').forEach(el=>rvIO.observe(el));
 
-  /* capture */
-  $$('[data-cap]').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();
-    f.innerHTML='<span class="cap-done">&#10003;&nbsp; You are on the list. We will write soon.</span>';}));
-
-  /* waitlist section */
-  const waitForm=$('#waitForm'),waitDone=$('#waitDone');
-  if(waitForm){waitForm.addEventListener('submit',e=>{
-    e.preventDefault();
-    waitForm.classList.add('hide');
-    waitDone.classList.add('show');
-  });}
-
   /* ================= SPA PAGE ROUTER ================= */
   const PAGE_MAP={
     'blog':'page-blog',
@@ -464,36 +452,20 @@
   if(mobile()&&!reduced){setChapter(0);
     let mi=0;$('#canvasPanel').addEventListener('click',()=>{mi=(mi+1)%3;setChapter(mi);});}
 
-  /* ================= BOOKS: write -> close -> shelve loop ================= */
-  const page=$('#ledgerPage');
-  const CYCLE=[['\u20B9 INDIA \u00B7 JUL','IND AS','\u20B9 IND \u00B7 JUL'],['$ US \u00B7 JUL','US GAAP','$ US \u00B7 JUL'],['S$ SINGAPORE \u00B7 JUL','SFRS','S$ SG \u00B7 JUL'],['\u20AC EUROPE \u00B7 JUL','IFRS','\u20AC EU \u00B7 JUL']];
-  let cyc=0;
-  let bookTimers=[];
-  function bt(fn,t){bookTimers.push(setTimeout(fn,t));}
-  function runLedgerLoop(){
-    bookTimers.forEach(clearTimeout);bookTimers=[];
-    page.classList.remove('w1','w2','w3','w4','closing');
-    page.style.opacity='1';
-    const [ph,std]=CYCLE[cyc%4];
-    const spans=page.querySelectorAll('.ph span');
-    spans[0].textContent=ph;spans[1].textContent=std;
-    void page.offsetWidth;
-    bt(()=>page.classList.add('w1'),600);
-    bt(()=>page.classList.add('w2'),1250);
-    bt(()=>page.classList.add('w3'),1900);
-    bt(()=>page.classList.add('w4'),2550);
-    bt(()=>page.classList.add('closing'),4100);
-    bt(()=>{ /* a new volume joins the shelf, no label, pure object */
-      shelfBooks.grow({w:44,h:200});
+  /* ================= BOOKS: three entities revolve \u2014 USA -> Singapore -> India \u2014 each closed month joins the shelf ================= */
+  const carousel=$('#ledgerCarousel');
+  if(carousel&&!reduced){
+    let cyc=0,bookTimers=[],ledgerOn=false;
+    const bt=(fn,t)=>bookTimers.push(setTimeout(fn,t));
+    function runLedgerLoop(){
+      carousel.style.transform='translateX(-50%) translateZ(-220px) rotateY('+(-cyc*120)+'deg)';
+      bt(()=>shelfBooks.grow({w:44,h:200}),1150);   // the month that just closed takes its place on the shelf
       cyc++;
-    },4800);
-    bt(runLedgerLoop,8200);
-  }
-  if(!reduced){
-    let ledgerOn=false;
+      bt(runLedgerLoop,3200);
+    }
     new IntersectionObserver(es=>es.forEach(e=>{
       if(e.isIntersecting&&!ledgerOn){ledgerOn=true;runLedgerLoop();}
-      if(!e.isIntersecting&&ledgerOn){ledgerOn=false;bookTimers.forEach(clearTimeout);bookTimers=[];}
+      else if(!e.isIntersecting&&ledgerOn){ledgerOn=false;bookTimers.forEach(clearTimeout);bookTimers=[];}
     }),{threshold:.3}).observe($('#books'));
-  }else{page.classList.add('w1','w2','w3','w4');}
+  }
 })();
