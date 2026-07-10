@@ -79,12 +79,12 @@
     for(let s=0;s<STR;s++){const y=rowY(s),row=[];for(let i=0;i<M;i++){row.push({x:mX+(i/(M-1))*runW,y});}ordPts.push(row);}
 
     /* chaos target: each thread wanders the whole field on three harmonics, looping and crossing the others */
-    const chaPts=[];
+    const chaPts=[],ycArr=[];
     for(let s=0;s<STR;s++){
       const r=prng(0x9E37+s*0x61C8);
       const HX=[{f:2+((r()*4)|0),a:rnd(r,150,235),p:r()*6.283},{f:3+((r()*4)|0),a:rnd(r,80,145),p:r()*6.283},{f:5+((r()*3)|0),a:rnd(r,34,74),p:r()*6.283}];
       const HY=[{f:2+((r()*3)|0),a:rnd(r,100,160),p:r()*6.283},{f:3+((r()*4)|0),a:rnd(r,50,92),p:r()*6.283},{f:6+((r()*3)|0),a:rnd(r,22,48),p:r()*6.283}];
-      const yc=cy+(rowY(s)-cy)*0.45;                    // spread across the sheet, pulled toward centre so lanes overlap
+      const yc=cy+(rowY(s)-cy)*0.45;ycArr.push(yc);      // spread across the sheet, pulled toward centre so lanes overlap
       const row=[];
       for(let i=0;i<M;i++){
         const t=i/(M-1),th=t*6.283;
@@ -148,7 +148,28 @@
       if(d.f){const fx=hw-14,fy=-hh+17;g.appendChild(mk('text',{x:fx,y:fy,class:'rc-flag','text-anchor':'end',transform:'rotate(-9 '+fx+' '+fy+')'},d.f));}
       gChaos.appendChild(g);
       const cx=clamp(COLX[i%5]+rnd(r,-46,46),128,W-128),cy=clamp(ROWY[(i/5|0)%3]+rnd(r,-42,42),74,H-74);
-      rcpts.push({g,cx,cy,rot:rnd(r,-16,16),rule:i});    // one paper per rule — each files itself onto its line
+      rcpts.push({g,cx,cy,rot:rnd(r,-16,16),rule:i,      // one paper per rule — flutters in, hangs in the knot, then files onto its line
+        y0:-(470+rnd(r,0,340)),fd:(i/(STR-1))*0.16+rnd(r,0,0.03), // start above the page top; rain down staggered
+        swA:rnd(r,34,82),swC:rnd(r,3,6),swP:r()*6.283,   // wide lateral glide, damping to rest
+        roA:rnd(r,8,22),roC:rnd(r,3,7),roP:r()*6.283});  // rocking tumble, damping to its resting tilt
+    });
+
+    /* the sheer volume of raw spend: extra slips rain down across the full width, scatter into the tangle, then dissolve */
+    const RAIN=[{a:'$12'},{v:'Uber',a:'$44'},{a:'$8'},{v:'Loom'},{a:'$320'},{v:'Airtable',a:'$60'},{},{a:'$5'},{v:'Retool',a:'$210'},{a:'$1,024'},{v:'Sentry'},{a:'$73'},{},{a:'$96'},{v:'Linear'},{a:'$19'}];
+    const rainX=[];
+    RAIN.forEach((d,i)=>{
+      const r=prng(0xBEEF+i*0x2545F5);
+      const w=74+Math.round(rnd(r,0,44)),hh=(44+Math.round(rnd(r,0,20)))/2,hw=w/2,padX=-hw+10;
+      const g=mk('g',{class:'rcpt rain'});
+      g.appendChild(mk('path',{class:'rc-paper',d:receiptPath(w,hh*2)}));
+      if(d.v)g.appendChild(mk('text',{x:padX,y:-hh+15,class:'rc-vendor'},d.v));
+      g.appendChild(mk('rect',{x:padX,y:-hh+(d.v?25:15),width:(w*0.5).toFixed(0),height:2,class:'rc-line'}));
+      g.appendChild(mk('rect',{x:padX,y:-hh+(d.v?33:23),width:(w*0.32).toFixed(0),height:2,class:'rc-line'}));
+      if(d.a)g.appendChild(mk('text',{x:hw-10,y:hh-10,class:'rc-amt','text-anchor':'end'},d.a));
+      gChaos.insertBefore(g,gChaos.firstChild);          // behind the real receipts
+      rainX.push({g,cx:clamp(70+rnd(r,0,1140),60,1220),cy:clamp(rnd(r,88,412),70,H-70),rot:rnd(r,-22,22),
+        y0:-(440+rnd(r,0,420)),fd:rnd(r,0,0.30),          // rain in over a long window
+        swA:rnd(r,30,84),swC:rnd(r,3,6),swP:r()*6.283,roA:rnd(r,10,26),roC:rnd(r,3,7),roP:r()*6.283});
     });
 
     /* the ledger it becomes — three columns on the ruled lines, debits equal credits */
@@ -185,40 +206,58 @@
       }
       return d;
     }
-    /* comb cascade: top thread settles first (SSTAG), left-to-right along each thread (PSTAG) */
+    /* three phases along gt: FALL (papers flutter in) -> ENTANGLE (knot weaves in around them) -> COMB (straighten to ruled lines) */
     const SSTAG=0.30,PSTAG=0.16,SPAN=1-SSTAG-PSTAG,RFLY=0.42,homeX=mX+90;
+    const ENT0=0.30,COMB0=0.54,FALLD=0.30;             // entangle start, comb start, per-paper fall duration (long, floaty descent)
     const cur=new Array(M);
     function frame(gt){
+      const combT=clamp((gt-COMB0)/(1-COMB0),0,1);
+      const eP=ease(clamp((gt-ENT0)/(COMB0-ENT0),0,1)); // the tangle weaves in around the fallen papers
       for(let s=0;s<STR;s++){
         const sd=(s/(STR-1))*SSTAG,a=chaPts[s],b=ordPts[s];
-        for(let i=0;i<M;i++){
-          const e=ease(clamp((gt-sd-(i/(M-1))*PSTAG)/SPAN,0,1));
-          cur[i]={x:lerp(a[i].x,b[i].x,e),y:lerp(a[i].y,b[i].y,e)};
+        if(combT<=0){                                   // pre-comb: grow the knot out of calm, near-flat threads
+          const y0=ycArr[s];
+          for(let i=0;i<M;i++){const t=i/(M-1);cur[i]={x:lerp(mX+t*runW,a[i].x,eP),y:lerp(y0,a[i].y,eP)};}
+          paths[s].setAttribute('d',crPath(cur));
+          paths[s].style.opacity=(style[s].chaosOp*eP).toFixed(3);
+        }else{                                          // comb cascade: top thread settles first, left-to-right along each
+          for(let i=0;i<M;i++){const e=ease(clamp((combT-sd-(i/(M-1))*PSTAG)/SPAN,0,1));cur[i]={x:lerp(a[i].x,b[i].x,e),y:lerp(a[i].y,b[i].y,e)};}
+          paths[s].setAttribute('d',crPath(cur));
+          const so=ease(clamp((combT-sd-PSTAG)/SPAN,0,1));
+          paths[s].style.opacity=lerp(style[s].chaosOp,style[s].restOp,so).toFixed(3);
         }
-        paths[s].setAttribute('d',crPath(cur));
-        const so=ease(clamp((gt-sd-PSTAG)/SPAN,0,1));  // thread settles -> stroke calms to a ledger rule
-        paths[s].style.opacity=lerp(style[s].chaosOp,style[s].restOp,so);
       }
-      for(const rc of rcpts){                           // each paper flies to its rule, rotates flat, files itself into the line
+      for(const rc of rcpts){                           // flutter down into the knot, hang, then file onto the line
         const sd=(rc.rule/(STR-1))*SSTAG;
-        const e=ease(clamp((gt-(sd+SPAN-RFLY))/RFLY,0,1));
-        const x=lerp(rc.cx,homeX,e),y=lerp(rc.cy,rowY(rc.rule),e),rot=lerp(rc.rot,0,e),sx=lerp(1,.55,e),sy=lerp(1,.06,e);
+        const fRaw=clamp((gt-rc.fd)/FALLD,0,1),fP=ease(fRaw);           // graceful glide down from the top
+        const bx=rc.cx+rc.swA*Math.sin(fRaw*rc.swC+rc.swP)*(1-fRaw);    // lateral glide, damping to rest
+        const by=lerp(rc.y0,rc.cy,fP),brot=rc.rot+rc.roA*Math.sin(fRaw*rc.roC+rc.roP)*(1-fRaw);
+        const ce=ease(clamp((combT-(sd+SPAN-RFLY))/RFLY,0,1));          // fly to rule + flatten
+        const x=lerp(bx,homeX,ce),y=lerp(by,rowY(rc.rule),ce),rot=lerp(brot,0,ce),sx=lerp(1,.55,ce),sy=lerp(1,.06,ce);
         rc.g.setAttribute('transform','translate('+x.toFixed(1)+' '+y.toFixed(1)+') rotate('+rot.toFixed(1)+') scale('+sx.toFixed(3)+' '+sy.toFixed(3)+')');
-        rc.g.style.opacity=(1-clamp((e-.55)/.45,0,1)).toFixed(3);
+        rc.g.style.opacity=(clamp(fRaw/0.28,0,1)*(1-clamp((ce-.55)/.45,0,1))).toFixed(3); // fade in as it drops, out as it files
+      }
+      for(const rc of rainX){                           // extra spend just rains down and dissolves into the tangle
+        const fRaw=clamp((gt-rc.fd)/FALLD,0,1),fP=ease(fRaw);
+        const x=rc.cx+rc.swA*Math.sin(fRaw*rc.swC+rc.swP)*(1-fRaw);
+        const y=lerp(rc.y0,rc.cy,fP),rot=rc.rot+rc.roA*Math.sin(fRaw*rc.roC+rc.roP)*(1-fRaw);
+        rc.g.setAttribute('transform','translate('+x.toFixed(1)+' '+y.toFixed(1)+') rotate('+rot.toFixed(1)+')');
+        const fadeOut=1-clamp((gt-ENT0)/(COMB0-ENT0),0,1); // absorbed as the knot weaves in
+        rc.g.style.opacity=(clamp(fRaw/0.28,0,1)*fadeOut*0.9).toFixed(3);
       }
       for(const o of orderEls){                         // each entry writes itself just after its paper is filed
         const sd=(o.rule/(STR-1))*SSTAG;
-        const e=ease(clamp((gt-(sd+SPAN+0.04))/0.16,0,1));
+        const e=ease(clamp((combT-(sd+SPAN+0.04))/0.16,0,1));
         o.el.style.opacity=e;o.el.style.transform='translateY('+((1-e)*7).toFixed(1)+'px)';
       }
-      bal.classList.toggle('on',gt>0.95);
+      bal.classList.toggle('on',combT>0.95);
     }
-    const DUR=2700;let raf=null,startT=0,running=false,enterT=null;
+    const DUR=4800;let raf=null,startT=0,running=false,enterT=null;
     function play(now){if(!startT)startT=now;const gt=Math.min(1,(now-startT)/DUR);frame(gt);if(gt<1)raf=requestAnimationFrame(play);else running=false;}
     function start(){if(running)return;running=true;startT=0;if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(play);}
     function reset(){clearTimeout(enterT);if(raf)cancelAnimationFrame(raf);running=false;frame(0);}
     if(reduced){frame(1);return;}
-    frame(0);                                           // begin as a dense knot, labelled with the raw spend
+    frame(0);                                           // begin empty — the papers then flutter in from above
     new IntersectionObserver(es=>es.forEach(e=>{
       if(e.isIntersecting)enterT=setTimeout(start,350);else reset(); // replays each time the hero returns
     }),{threshold:.35}).observe(svg);

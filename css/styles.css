@@ -57,6 +57,9 @@ nav .in{max-width:1240px;margin:0 auto;padding:0 32px;height:64px;display:flex;a
 .rc-amt{font-size:14px;font-weight:600;fill:var(--ink)}
 .rc-line{fill:#E8E7E0}
 .rc-flag{font-size:9px;font-weight:700;fill:#A34848;letter-spacing:.09em}
+.rcpt.rain .rc-paper{filter:drop-shadow(0 1px 3px rgba(20,20,24,.09))}
+.rcpt.rain .rc-vendor{font-size:10px}
+.rcpt.rain .rc-amt{font-size:11px}
 /* ledger it becomes — the settled log, set large and legible */
 .wo{font-size:25px;fill:var(--ink)}
 .wo .tag{fill:var(--gray);font-weight:600}
